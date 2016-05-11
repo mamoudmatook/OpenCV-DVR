@@ -5,6 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 class VideoRecorder
 {
@@ -12,13 +13,18 @@ public:
 	VideoRecorder();
 	~VideoRecorder();
 
+	enum Action
+	{
+		eNothing, eRecord, ePlay, eForward, eRewind
+	};
+
+	Action Command;
 	cv::VideoCapture Cap;
 	cv::VideoWriter Writer;
 	int FPS;
 	int VideoHeight;
 	int VideoWidth;
 	double Ratio;
-	bool IsRecording;
 	bool IsColored;
 	bool IsEqualized;
 
