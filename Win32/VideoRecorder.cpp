@@ -65,8 +65,8 @@ cv::Size VideoRecorder::GetFrameSize()
 
 bool VideoRecorder::SetVideo(std::string filePath, int fps, int width, int height)
 {
-	//int fcc = CV_FOURCC('D', 'X', '5', '0');
-	int fcc = CV_FOURCC('M', 'J', 'P', 'G');
+	int fcc = CV_FOURCC('D', 'X', '5', '0');
+	//int fcc = CV_FOURCC('M', 'J', 'P', 'G');
 	Writer = cv::VideoWriter(filePath, fcc, fps, cv::Size(width, height));
 
 	if (!Writer.isOpened())
