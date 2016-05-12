@@ -21,6 +21,11 @@ VideoRecorder::VideoRecorder()
 		VideoWidth = FrameWidth;
 		VideoHeight = FrameHeight;
 		Ratio = FrameHeight / FrameWidth;
+		FPS = Cap.get(CV_CAP_PROP_FPS);
+		if (FPS == 0)
+		{
+			FPS = 24;
+		}
 		WindowName = "Video Recorder";
 	}
 }

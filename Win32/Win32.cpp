@@ -152,8 +152,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    VideoHeightString << vr->VideoHeight;
    FpsString << vr->FPS;
 
-   vr->SetVideo(Filepath + FileName + FileExtension, 20, vr->GetFrameSize().width, vr->GetFrameSize().height);
-   SetTimer(hWnd, 100, 33, (TIMERPROC)NULL);
+   vr->SetVideo(Filepath + FileName + FileExtension, vr->FPS, vr->GetFrameSize().width, vr->GetFrameSize().height);
+   SetTimer(hWnd, 100, 1000/vr->FPS, (TIMERPROC)NULL);
    
 
    return TRUE;
@@ -277,7 +277,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			NULL);
 		CheckDlgButton(hWnd, IDC_EQUALIZE_RADIO, BST_UNCHECKED);
 
-		HWND hWndFPSCombobox = CreateWindowEx(NULL,
+		/*HWND hWndFPSCombobox = CreateWindowEx(NULL,
 			L"COMBOBOX",
 			L"FPS",
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | CBS_SIMPLE,
@@ -288,7 +288,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hWnd,
 			(HMENU)IDC_FPS_COMBO,
 			GetModuleHandle(NULL),
-			NULL);
+			NULL);*/
 
 		hWndFPSText = CreateWindowEx(WS_EX_CLIENTEDGE,
 			L"EDIT",
@@ -414,8 +414,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				sizeof(bufferH),
 				reinterpret_cast<LPARAM>(bufferH));
 
-			vr->ChangeSize(_wtoi(bufferW), _wtoi(bufferH));
-			vr->SetVideo(Filepath + FileName + FileExtension, 20, vr->VideoWidth, vr->VideoHeight);
+			if (_wtoi(bufferW) > 0 && _wtoi(bufferH))
+			{
+				vr->ChangeSize(_wtoi(bufferW), _wtoi(bufferH));
+				vr->SetVideo(Filepath + FileName + FileExtension, vr->FPS, vr->VideoWidth, vr->VideoHeight);
+			}
+			break;
+		case IDC_FPS_BUTTON:
+
+			wchar_t bufferFps[256];
+			SendMessage(hWndFPSText,
+				WM_GETTEXT,
+				sizeof(bufferFps),
+				reinterpret_cast<LPARAM>(bufferFps));
+
+			if (_wtoi(bufferFps) > 0) {
+				vr->FPS = _wtoi(bufferFps);
+				vr->SetVideo(Filepath + FileName + FileExtension, vr->FPS, vr->VideoWidth, vr->VideoHeight);
+				SetTimer(hWnd, 100, 1000 / vr->FPS, (TIMERPROC)NULL);
+			}
 
 			break;
 		case IDM_ABOUT:
