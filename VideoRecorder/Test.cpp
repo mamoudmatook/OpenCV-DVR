@@ -15,7 +15,7 @@ int main()
 
 	VideoRecorder myVideo = VideoRecorder();
 
-	myVideo.SetVideo(filepath+fileName+fileExtension, fcc, 20, myVideo.GetFrameSize());
+	myVideo.SetVideo(filepath+fileName+fileExtension, 20, myVideo.GetFrameSize());
 
 	while (1) 
 	{

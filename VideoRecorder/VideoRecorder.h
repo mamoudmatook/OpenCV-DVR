@@ -29,7 +29,7 @@ public:
 	bool IsEqualized;
 
 	cv::Size GetFrameSize();
-	bool SetVideo(std::string filePath, int fcc, int fps, cv::Size frameSize);
+	bool SetVideo(std::string filePath, int fps, cv::Size frameSize);
 	void Capture();
 	void Show();
 	void ChangeSize(int width, int height);

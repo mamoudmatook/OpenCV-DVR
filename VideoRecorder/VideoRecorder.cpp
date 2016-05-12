@@ -1,6 +1,5 @@
 #include "VideoRecorder.h"
 
-
 VideoRecorder::VideoRecorder()
 {
 	IsColored = true;
@@ -44,8 +43,9 @@ cv::Size VideoRecorder::GetFrameSize()
 	return cv::Size(FrameWidth, FrameHeight);
 }
 
-bool VideoRecorder::SetVideo(std::string filePath, int fcc, int fps, cv::Size frameSize)
+bool VideoRecorder::SetVideo(std::string filePath, int fps, cv::Size frameSize)
 {
+	int fcc = CV_FOURCC('D', 'X', '5', '0');
 	Writer = cv::VideoWriter(filePath, fcc, fps, frameSize);
 
 	if (!Writer.isOpened()) 
