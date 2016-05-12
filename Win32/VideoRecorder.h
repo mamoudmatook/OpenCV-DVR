@@ -22,7 +22,7 @@ public:
 	bool IsEqualized;
 
 	cv::Size GetFrameSize();
-	bool SetVideo(std::string filePath, int fps, cv::Size frameSize);
+	bool SetVideo(std::string filePath, int fps, int width, int height);
 	bool Capture();
 	void Show();
 	void ChangeSize(int width, int height);
@@ -31,6 +31,8 @@ public:
 	void Record();
 	void Rewind(int x = 2);
 	void FastForward(int x = 2);
+
+	std::string Timestamp();
 
 private:
 	void ProcessBuffer();

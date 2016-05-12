@@ -41,16 +41,28 @@ std::string VideoRecorder::DateNow()
 	return buf;
 }
 
+std::string VideoRecorder::Timestamp()
+{
+	char buffer[80];
+	time_t rawTime;
+	struct tm * timeinfo;
+	time(&rawTime);
+	timeinfo = localtime(&rawTime);
+	strftime(buffer, 80, "%d%m%Y%I%M%S", timeinfo);
+	std::string str(buffer);
+	return str;
+}
+
 cv::Size VideoRecorder::GetFrameSize()
 {
 	return cv::Size(FrameWidth, FrameHeight);
 }
 
-bool VideoRecorder::SetVideo(std::string filePath, int fps, cv::Size frameSize)
+bool VideoRecorder::SetVideo(std::string filePath, int fps, int width, int height)
 {
 	//int fcc = CV_FOURCC('D', 'X', '5', '0');
 	int fcc = CV_FOURCC('M', 'J', 'P', 'G');
-	Writer = cv::VideoWriter(filePath, fcc, fps, frameSize);
+	Writer = cv::VideoWriter(filePath, fcc, fps, cv::Size(width, height));
 
 	if (!Writer.isOpened())
 	{
@@ -77,9 +89,9 @@ void VideoRecorder::Resize()
 void VideoRecorder::ProcessBuffer()
 {
 	if (!Buffer.empty()) {
-		cv::putText(Buffer, DateNow(), cv::Point(10, VideoHeight - 10), 1, 1, cv::Scalar(255, 255, 255), 2, 7);
-
 		Resize();
+
+		cv::putText(Buffer, DateNow(), cv::Point((VideoWidth*0.02), VideoHeight - (VideoHeight * 0.02)), 1, 1, cv::Scalar(255, 255, 255), 2, 7);
 
 		if (!IsColored)
 		{
