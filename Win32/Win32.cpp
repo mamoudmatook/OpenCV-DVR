@@ -141,17 +141,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
-   IsOk = false;
-   Filepath = "C:\\users\\david\\";
-   FileExtension = ".avi";
-   FileName = "test";
-   
    vr = new VideoRecorder();
    VideoWidthString.clear();
    VideoHeightString.clear();
    VideoWidthString << vr->VideoWidth;
    VideoHeightString << vr->VideoHeight;
    FpsString << vr->FPS;
+
+   IsOk = false;
+   Filepath = "C:\\users\\david\\";
+   FileExtension = ".avi";
+   FileName = "test"+vr->Timestamp();
 
    vr->SetVideo(Filepath + FileName + FileExtension, vr->FPS, vr->GetFrameSize().width, vr->GetFrameSize().height);
    SetTimer(hWnd, 100, 1000/vr->FPS, (TIMERPROC)NULL);
@@ -463,6 +463,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// TODO: Add any drawing code here...
 		EndPaint(hWnd, &ps);
 		break;
+	/*case WM_CHILDACTIVATE:
+		SendMessage(hWndFPSText, WM_SETTEXT, 0, (LPARAM)FpsString.str().c_str());
+		break;*/
 	case WM_DESTROY:
 		delete vr;
 		PostQuitMessage(0);
