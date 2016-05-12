@@ -16,14 +16,27 @@
 #define IDC_EQUALIZE_RADIO 115
 #define IDC_COLOR_BUTTON 116
 #define IDC_GRAY_BUTTON 117
+#define IDC_FPS_COMBO 118
+#define IDC_FPS_TEXT 119
+#define IDC_WIDTH_TEXT 120
+#define IDC_HEIGHT_TEXT 121
+#define IDC_RESIZE_BUTTON 122
+#define IDC_FPS_BUTTON 123
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
+HWND hWndFPSText;
+HWND hWndWidthText;
+HWND hWndHeightText;
+
 VideoRecorder* vr;
 bool IsOk;
+std::wstringstream videoWidth;
+std::wstringstream videoHeight;
+std::wstringstream fps;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -114,7 +127,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, 110, 200, NULL, NULL, hInstance, NULL);
+      CW_USEDEFAULT, 0, 110, 350, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {
@@ -130,6 +143,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    std::string fileName = "test";
    
    vr = new VideoRecorder();
+   videoWidth.clear();
+   videoHeight.clear();
+   videoWidth << vr->VideoWidth;
+   videoHeight << vr->VideoHeight;
+   fps << vr->FPS;
+
    vr->SetVideo(filepath + fileName + fileExtension, 20, vr->GetFrameSize());
    SetTimer(hWnd, 100, 33, (TIMERPROC)NULL);
    
@@ -244,7 +263,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HWND hWndEqualizeCheckbox = CreateWindowEx(NULL,
 			L"BUTTON",
 			L"Equalizar",
-			WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
+			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
 			5,
 			180,
 			100,
@@ -254,6 +273,82 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL);
 		CheckDlgButton(hWnd, IDC_EQUALIZE_RADIO, BST_UNCHECKED);
+
+		HWND hWndFPSCombobox = CreateWindowEx(NULL,
+			L"COMBOBOX",
+			L"FPS",
+			WS_TABSTOP | WS_VISIBLE | WS_CHILD | CBS_SIMPLE,
+			5,
+			205,
+			100,
+			24,
+			hWnd,
+			(HMENU)IDC_FPS_COMBO,
+			GetModuleHandle(NULL),
+			NULL);
+
+		hWndFPSText = CreateWindowEx(WS_EX_CLIENTEDGE,
+			L"EDIT",
+			L"FPS",
+			WS_TABSTOP | WS_CHILD | WS_VISIBLE,
+			5,
+			205,
+			45,
+			24,
+			hWnd,
+			(HMENU)IDC_FPS_TEXT,
+			GetModuleHandle(NULL),
+			NULL);
+		HWND hWndFPSButton = CreateWindowEx(NULL,
+			L"BUTTON",
+			L"Cambiar FPS",
+			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+			5,
+			230,
+			100,
+			24,
+			hWnd,
+			(HMENU)IDC_FPS_BUTTON,
+			GetModuleHandle(NULL),
+			NULL);
+
+		hWndWidthText = CreateWindowEx(WS_EX_CLIENTEDGE,
+			L"EDIT",
+			L"Width",
+			WS_TABSTOP | WS_CHILD | WS_VISIBLE,
+			5,
+			260,
+			45,
+			24,
+			hWnd,
+			(HMENU)IDC_WIDTH_TEXT,
+			GetModuleHandle(NULL),
+			NULL);
+		hWndHeightText = CreateWindowEx(WS_EX_CLIENTEDGE,
+			L"EDIT",
+			L"Height",
+			WS_TABSTOP | WS_CHILD | WS_VISIBLE,
+			50,
+			260,
+			45,
+			24,
+			hWnd,
+			(HMENU)IDC_HEIGHT_TEXT,
+			GetModuleHandle(NULL),
+			NULL);
+
+		HWND hWndResizeButton = CreateWindowEx(NULL,
+			L"BUTTON",
+			L"Resize",
+			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+			5,
+			285,
+			100,
+			24,
+			hWnd,
+			(HMENU)IDC_RESIZE_BUTTON,
+			GetModuleHandle(NULL),
+			NULL);
 	}
 		break;
 	case WM_COMMAND:
@@ -302,6 +397,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				CheckDlgButton(hWnd, IDC_EQUALIZE_RADIO, BST_CHECKED);
 			}
 		}
+			break;
+		case IDC_RESIZE_BUTTON:
+
+			wchar_t bufferW[256];
+			wchar_t bufferH[256];
+			SendMessage(hWndWidthText,
+				WM_GETTEXT,
+				sizeof(bufferW),
+				reinterpret_cast<LPARAM>(bufferW));
+			SendMessage(hWndHeightText,
+				WM_GETTEXT,
+				sizeof(bufferH),
+				reinterpret_cast<LPARAM>(bufferH));
+
+			vr->ChangeSize(_wtoi(bufferW), _wtoi(bufferH));
+
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
