@@ -17,5 +17,14 @@
 #include <memory.h>
 #include <tchar.h>
 
+#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_DEPRECATE
 
+#include "opencv\highgui.h"
+#include "opencv\cv.h"
+#include <iostream>
+#include <ctime>
+#include <chrono>
+#include <thread>
+#include <algorithm>
 // TODO: reference additional headers your program requires here
