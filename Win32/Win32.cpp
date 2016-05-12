@@ -34,9 +34,12 @@ HWND hWndHeightText;
 
 VideoRecorder* vr;
 bool IsOk;
-std::wstringstream videoWidth;
-std::wstringstream videoHeight;
-std::wstringstream fps;
+std::string Filepath;
+std::string FileExtension;
+std::string FileName;
+std::wstringstream VideoWidthString;
+std::wstringstream VideoHeightString;
+std::wstringstream FpsString;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -138,18 +141,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
 
    IsOk = false;
-   std::string filepath = "C:\\users\\david\\";
-   std::string fileExtension = ".avi";
-   std::string fileName = "test";
+   Filepath = "C:\\users\\david\\";
+   FileExtension = ".avi";
+   FileName = "test";
    
    vr = new VideoRecorder();
-   videoWidth.clear();
-   videoHeight.clear();
-   videoWidth << vr->VideoWidth;
-   videoHeight << vr->VideoHeight;
-   fps << vr->FPS;
+   VideoWidthString.clear();
+   VideoHeightString.clear();
+   VideoWidthString << vr->VideoWidth;
+   VideoHeightString << vr->VideoHeight;
+   FpsString << vr->FPS;
 
-   vr->SetVideo(filepath + fileName + fileExtension, 20, vr->GetFrameSize());
+   vr->SetVideo(Filepath + FileName + FileExtension, 20, vr->GetFrameSize().width, vr->GetFrameSize().height);
    SetTimer(hWnd, 100, 33, (TIMERPROC)NULL);
    
 
@@ -412,6 +415,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				reinterpret_cast<LPARAM>(bufferH));
 
 			vr->ChangeSize(_wtoi(bufferW), _wtoi(bufferH));
+			vr->SetVideo(Filepath + FileName + FileExtension, 20, vr->VideoWidth, vr->VideoHeight);
 
 			break;
 		case IDM_ABOUT:
