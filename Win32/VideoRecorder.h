@@ -8,7 +8,7 @@ public:
 
 	enum Action
 	{
-		eNothing, eRecord, ePlay, eForward, eRewind
+		eNothing, eRecord, ePlay, eForward, eRewind, ePause
 	};
 
 	Action Command;
@@ -27,7 +27,7 @@ public:
 	void Show();
 	void ChangeSize(int width, int height);
 	void ChangeFPS(int fps);
-	void Play();
+	void Play(bool pause = false);
 	void Record();
 	void Rewind(int x = 2);
 	void FastForward(int x = 2);

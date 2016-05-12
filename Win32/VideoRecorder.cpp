@@ -135,17 +135,21 @@ void VideoRecorder::Record()
 	cv::putText(Frame, "REC", cv::Point(5, 20), 1, 1, cv::Scalar(0, 0, 255), 2, 7);
 }
 
-void VideoRecorder::Play()
+void VideoRecorder::Play(bool pause)
 {
-	if (FrameNumber >= InMemoryVideo.size())
-	{
-		FrameNumber = 0;
-	}
+	if (!InMemoryVideo.empty()) {
+		if (FrameNumber >= InMemoryVideo.size())
+		{
+			FrameNumber = 0;
+		}
 
-	InMemoryVideo[FrameNumber].copyTo(Frame);
-	if (InMemoryVideo.size() > FrameNumber)
-	{
-		FrameNumber++;
+		InMemoryVideo[FrameNumber].copyTo(Frame);
+		if (InMemoryVideo.size() > FrameNumber)
+		{
+			if (!pause) {
+				FrameNumber++;
+			}
+		}
 	}
 }
 
