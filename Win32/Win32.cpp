@@ -12,7 +12,7 @@
 #define IDC_PLAY_BUTTON 111
 #define IDC_REWIND_BUTTON 112
 #define IDC_FORWARD_BUTTON 113
-#define IDC_STOP_BUTTON 114
+#define IDC_FEED_BUTTON 114
 #define IDC_EQUALIZE_RADIO 115
 #define IDC_COLOR_BUTTON 116
 #define IDC_GRAY_BUTTON 117
@@ -31,6 +31,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 HWND hWndFPSText;
 HWND hWndWidthText;
 HWND hWndHeightText;
+HWND hWndPlayButton;
 
 VideoRecorder* vr;
 bool IsOk;
@@ -130,7 +131,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, 110, 350, NULL, NULL, hInstance, NULL);
+      CW_USEDEFAULT, 0, 110, 450, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {
@@ -215,7 +216,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			(HMENU)IDC_FORWARD_BUTTON,
 			GetModuleHandle(NULL),
 			NULL);
-		HWND hWndPlayButton = CreateWindowEx(NULL,
+		hWndPlayButton = CreateWindowEx(NULL,
 			L"BUTTON",
 			L"Play",
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
@@ -227,16 +228,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			(HMENU)IDC_PLAY_BUTTON,
 			GetModuleHandle(NULL),
 			NULL);
-		HWND hWndStopButton = CreateWindowEx(NULL,
+		HWND hWndFeedButton = CreateWindowEx(NULL,
 			L"BUTTON",
-			L"Stop",
+			L"Feed",
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 			5,
 			105,
 			100,
 			24,
 			hWnd,
-			(HMENU)IDC_STOP_BUTTON,
+			(HMENU)IDC_FEED_BUTTON,
 			GetModuleHandle(NULL),
 			NULL);
 		HWND hWndColorButton = CreateWindowEx(NULL,
@@ -372,13 +373,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 			break;
 		case IDC_PLAY_BUTTON:
-			vr->Command = VideoRecorder::ePlay;
+			if (vr->Command == VideoRecorder::ePlay) {
+				SendMessage(hWndPlayButton, WM_SETTEXT, 0, (LPARAM)_T("Play"));
+				vr->Command = VideoRecorder::ePause;
+			}
+			else
+			{
+				SendMessage(hWndPlayButton, WM_SETTEXT, 0, (LPARAM)_T("Pause"));
+				vr->Command = VideoRecorder::ePlay;
+			}
 			break;
 		case IDC_REWIND_BUTTON:
 			vr->Command = VideoRecorder::eRewind;
 			break;
 		case IDC_FORWARD_BUTTON:
 			vr->Command = VideoRecorder::eForward;
+			break;
+		case IDC_FEED_BUTTON:
+			vr->Command = VideoRecorder::eNothing;
 			break;
 		case IDC_COLOR_BUTTON:
 			vr->IsColored = true;
@@ -478,6 +490,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case VideoRecorder::ePlay:
 			vr->Play();
+			break;
+		case VideoRecorder::ePause:
+			vr->Play(true);
 			break;
 		default:
 			break;
